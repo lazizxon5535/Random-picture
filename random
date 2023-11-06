@@ -1,0 +1,65 @@
+from aiogram import Dispatcher, Bot, executor, types
+from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+import requests, os
+from random import choice
+
+# os.chdir('image')
+# print(os.walk('image'))
+# #
+memory = MemoryStorage()
+
+
+bot = Bot(token="6502138151:AAHO5GJhpVHFZbOOIpIs5btFlCDDdQL2Lj4")
+
+dp = Dispatcher(bot=bot, storage=memory)
+
+
+start_keyboard = ReplyKeyboardMarkup(
+    keyboard=[
+        [
+
+            KeyboardButton("Tulki 🦊"),
+            KeyboardButton("Cat 🐈‍⬛")
+        ],
+        [
+            KeyboardButton("Wolf"),
+            KeyboardButton("Duck"),
+        ]
+    ], resize_keyboard=True
+)
+
+
+
+@dp.message_handler(text="/start")
+async def cmd_Start(message: types.Message):
+    await message.answer(f"Assalom aleykum {message.from_user.full_name}\n"
+                         f"Marhamat tanlang! ", reply_markup=start_keyboard)
+
+
+@dp.message_handler(text="Tulki 🦊")
+async def cmd_fox(message: types.Message):
+    photo = requests.get("https://randomfox.ca/floof/").json()["image"]
+    await message.answer_photo(photo=photo, caption="Marxamat tulkini rasmi!")
+
+@dp.message_handler(text="Cat 🐈‍⬛")
+async def cmd_export(message:types.Message):
+    photo = open('image/cat.jpg','rb')
+    await message.answer_photo(photo=photo,caption="Marxamat cat  ni rasmi ")
+
+@dp.message_handler(text="Wolf")
+async def cmd_export(message:types.Message):
+    photo = open('image/wolf1.jpg','rb')
+    await  message.answer_photo(photo=photo,caption="Marxamat wolf ni rasmi ")
+
+@dp.message_handler(text="Duck")
+async def cmd_export(message:types.Message):
+    image = ['cat.jpg','images.jpg']
+    chois = choice(image)
+
+    photo = open(f'image/{chois}','rb')
+    await message.answer_photo(photo=photo,caption="Marxamat Duck ni rasmi ")
+
+
+if __name__ == "__main__":
+    executor.start_polling(dp, skip_updates=True)
